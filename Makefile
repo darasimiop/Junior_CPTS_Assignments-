@@ -1,17 +1,17 @@
 CC = gcc
-CFLAGS = -g -Wall -Werror -std=c99
+CFLAGS = -g
 
-all: csim
+scheduler: pa2_ogunbinu-peters.c
+	$(CC) pa2_ogunbinu-peters.c -o scheduler
 
-csim: cachesim.c 
-	$(CC) $(CFLAGS) -o cachesim cachesim.c -lm 
+test01:
+	./scheduler sample_io/input/input-1
 
-#
-# cleanup
-#
+test02:
+	./scheduler sample_io/input/input-2
+
+test03:
+	./scheduler sample_io/input/input-3
+
 clean:
-	rm -rf *.o
-	rm -rf *.tmp
-	rm -f cachesim 
-	rm -f trace.all trace.f*
-
+	rm -f scheduler *.o *~
