@@ -1,17 +1,21 @@
-CC = gcc
-CFLAGS = -g
+EXTRA_CFLAGS +=
+APP_EXTRA_FLAGS := -O2 -ansi -pedantic
+KERNEL_SRC := /lib/modules/$(shell uname -r)/build
+SUBDIR := $(PWD)
+GCC := gcc
+RM := rm
 
-scheduler: pa2_ogunbinu-peters.c
-	$(CC) pa2_ogunbinu-peters.c -o scheduler
+.PHONY: clean all modules app
 
-test01:
-	./scheduler sample_io/input/input-1
+all: clean modules app
 
-test02:
-	./scheduler sample_io/input/input-2
+obj-m := kmlab.o
 
-test03:
-	./scheduler sample_io/input/input-3
+modules:
+	$(MAKE) -C $(KERNEL_SRC) M=$(SUBDIR) modules
+
+app: userapp.c userapp.h
+	$(GCC) $(APP_EXTRA_FLAGS) -o userapp userapp.c
 
 clean:
-	rm -f scheduler *.o *~
+	$(RM) -f userapp *~ *.ko *.o *.mod.c Module.symvers modules.order
