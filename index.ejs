@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2FA Demo</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>2FA Demo App</h1>
+
+    <!-- Generate Secret & QR Code -->
+    <form action="/generate" method="post">
+      <button type="submit">Generate Secret</button>
+    </form>
+
+    <% if (secret && qrCodeURL) { %>
+      <h2>Secret Key:</h2>
+      <p><%= secret %></p>
+      <h2>Scan the QR Code:</h2>
+      <div class="qr-code">
+        <img src="<%= qrCodeURL %>" alt="QR Code">
+      </div>
+    <% } %>
+
+    <!-- Validate Token -->
+    <form action="/validate" method="post">
+      <input type="text" name="token" placeholder="Enter Token" required>
+      <button type="submit">Validate Token</button>
+    </form>
+
+    <% if (isValid !== undefined) { %>
+      <h3>Token is <%= isValid ? "Valid ✅" : "Invalid ❌" %></h3>
+    <% } %>
+  </div>
+</body>
+</html>

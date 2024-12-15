@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2FA Demo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>2FA Demo App</h1>
+        
+        <!-- Button to Generate 2FA Secret -->
+        <button id="generateSecret">Generate Secret</button>
+        <br>
+        
+        <!-- QR Code Image -->
+        <div id="qrCode" class="qr-code"></div>
+        <br>
+
+        <!-- Input for Token Validation -->
+        <input type="text" id="tokenInput" placeholder="Enter Token">
+        <button id="validateToken">Validate Token</button>
+        <p id="validationResult"></p>
+    </div>
+
+    <script>
+        let secret = "";
+
+        // Generate Secret and Display QR Code
+        document.getElementById("generateSecret").addEventListener("click", async () => {
+            try {
+                const response = await fetch("/generate");
+                const data = await response.json();
+
+                if (data.qrCode) {
+                    secret = data.secret; // Save the secret for validation
+                    document.getElementById("qrCode").innerHTML = `
+                        <img src="${data.qrCode}" alt="QR Code" />
+                        <p>Secret: ${secret}</p>
+                    `;
+                } else {
+                    console.error("Failed to get QR Code");
+                }
+            } catch (error) {
+                console.error("Error generating QR Code:", error);
+            }
+        });
+
+        // Validate Token
+        document.getElementById("validateToken").addEventListener("click", async () => {
+            const token = document.getElementById("tokenInput").value;
+
+            try {
+                const response = await fetch("/verify", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        token: token,
+                        secret: secret
+                    })
+                });
+
+                const result = await response.json();
+                const message = result.valid ? "Token is valid!" : "Token is invalid!";
+                document.getElementById("validationResult").textContent = message;
+
+            } catch (error) {
+                console.error("Error verifying token:", error);
+            }
+        });
+    </script>
+</body>
+</html>
